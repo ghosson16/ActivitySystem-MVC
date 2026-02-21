@@ -1,0 +1,54 @@
+﻿@using ActivitySystem.Models.AccountVM
+@model VerifyEmailViewModel
+
+@{
+    ViewData["Title"] = "Verify Email";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 g-0 custom-auth-card overflow-hidden border-0 d-flex flex-column flex-md-row" style="min-height: 400px;">
+
+            <div class="col-md-5 dark-auth-section d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                <div class="mb-3">
+                    <i class="bi bi-patch-check text-secondary opacity-50" style="font-size: 5rem;"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Account Recovery</h4>
+                <p class="small opacity-75 mb-0">Enter your email address to verify your account identity.</p>
+            </div>
+
+            <div class="col-md-7 p-5 d-flex flex-column justify-content-center">
+                <h4 class="fw-bold mb-4 text-dark">Verify Email</h4>
+
+                <form asp-action="VerifyEmail" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="Email" class="extra-small fw-bold text-muted mb-1 d-block">Registered Email</label>
+                        <div class="d-flex align-items-center border-bottom pb-1 custom-focus">
+                            <i class="bi bi-envelope text-muted me-2"></i>
+                            <input asp-for="Email" class="form-control border-0 shadow-none p-0 bg-transparent fs-6" placeholder="name@example.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger extra-small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 rounded-3 py-2 fw-bold shadow-sm mb-3">
+                        Verify Now
+                    </button>
+
+                    <div class="text-center mt-2">
+                        <a asp-controller="Account" asp-action="Login" class="text-muted extra-small text-decoration-none hover-dark">
+                            <i class="bi bi-arrow-left"></i> Back to Login
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

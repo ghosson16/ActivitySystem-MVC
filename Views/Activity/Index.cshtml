@@ -1,0 +1,94 @@
+﻿@using ActivitySystem.Models.ActivityVM
+@model IEnumerable<ActivityIndexViewModel>
+
+<div class="container mt-5">
+    @if (User.IsInRole("Organizer"))
+    {
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h2 class="fw-bold text-dark">Current Activities</h2>
+            @if (Model.Any())
+            {
+                <a asp-action="Create" class="btn btn-dark rounded-pill px-4 shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Add Activity
+                </a>
+            }
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 mt-5">
+            <div class="mb-4">
+                <i class="bi bi-calendar-x opacity-25" style="font-size: 7rem; color: #6c757d;"></i>
+            </div>
+            <h3 class="fw-bold text-dark">No Activities Found</h3>
+            <p class="text-muted fs-5">
+                @(User.IsInRole("Organizer")
+                            ? "You haven't created any activities yet. Start by adding your first one!" 
+                                            : "There are no upcoming activities at the moment. Please check back later.")
+            </p>
+            @if (User.IsInRole("Organizer"))
+            {
+                <a asp-action="Create" class="btn btn-dark rounded-pill px-4 mt-3">
+                    <i class="bi bi-plus-lg me-1"></i> Create Your First Activity
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark rounded-pill px-4 mt-3">
+                    <i class="bi bi-house-door me-1"></i> Back to Dashboard
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="solution_card">
+                        <div class="slot-badge">@item.Capacity Slots</div>
+                        <div class="hover_color_bubble"></div>
+
+                        <div class="image-container-full">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Title" class="activity-img">
+                            }
+                            else
+                            {
+                                <div class="no-image-placeholder">
+                                    <i class="bi bi-card-image"></i>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="card-content">
+                            <div class="solu_title">
+                                <h3>@item.Title</h3>
+                            </div>
+
+                            <div class="solu_description">
+                                <p>@item.Description</p>
+                            </div>
+
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <i class="bi bi-geo-alt text-danger"></i> @item.Location
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-calendar3 text-primary"></i> @item.Date.ToString("dd MMM yyyy")
+                                </div>
+                            </div>
+
+                            <a asp-action="Details" asp-route-id="@item.Id" class="read_more_btn">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

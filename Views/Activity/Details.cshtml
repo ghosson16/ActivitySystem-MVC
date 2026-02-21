@@ -1,0 +1,96 @@
+﻿@using ActivitySystem.Domain.Entities
+@using ActivitySystem.Models.ActivityVM
+@using Microsoft.AspNetCore.Identity
+@model ActivityDetailsViewModel
+@inject UserManager<ApplicationUser> _userManager
+
+<div class="container mt-5">
+    <partial name="_StatusMessages" />
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="bg-white shadow-sm rounded-4 overflow-hidden mb-4 border-0">
+                <nav aria-label="breadcrumb" class="d-flex justify-content-between align-items-center">
+                    <a asp-controller="Activity" asp-action="Index" class="btn btn-link text-decoration-none text-muted p-0">
+                        <i class="bi bi-arrow-left me-1"></i> Back
+                    </a>
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a asp-controller="Activity" asp-action="Index" class="text-decoration-none text-muted">Activities</a></li>
+                        <li class="breadcrumb-item active">Details</li>
+                    </ol>
+                   
+                </nav>
+
+                <div class="position-relative" style="height: 400px;">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" class="w-100 h-100" style="object-fit: cover;" alt="@Model.Title">
+                    }
+                    else
+                    {
+                        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                        </div>
+                    }
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-dark px-3 py-2 shadow-sm rounded-pill">
+                            <i class="bi bi-people-fill me-1"></i> @Model.Capacity Total Slots
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-4">
+                    <h2 class="fw-bold mb-3">@Model.Title</h2>
+
+                    @if (_userManager.GetUserId(User) != Model.OrganizerId)
+                    {
+                        <div class="d-flex align-items-center p-3 mb-4 rounded-3 border-0 bg-light shadow-sm" style="border-left: 4px solid #4e73df !important;">
+                            <div class="organizer-avatar me-3">
+                                @(Model.OrganizerName.ToString().ToUpper())
+                            </div>
+                            <div class="d-flex flex-wrap align-items-center">
+                                <div class="me-4 border-end pe-4">
+                                    <p class="text-muted mb-0 small text-uppercase fw-bold">Organized by</p>
+                                    <h6 class="mb-0 fw-bold">@(Model.OrganizerName)</h6>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.OrganizerPhoneNumber))
+                                {
+                                    <div>
+                                        <p class="text-muted mb-0 small text-uppercase fw-bold">Contact Info</p>
+                                        <a href="tel:@Model.OrganizerPhoneNumber" class="text-decoration-none fw-bold text-primary">
+                                            <i class="bi bi-telephone-fill me-1 small"></i> @Model.OrganizerPhoneNumber
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <h5 class="fw-bold mb-3 mt-4">About this activity</h5>
+                    <p class="text-secondary lh-lg" style="white-space: pre-line;">@Model.Description</p>
+
+                    <partial name="_ActivityInfoCards" model="Model" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="sticky-top">
+                <div class="bg-white p-4 shadow-sm rounded-4 mb-3 border">
+                    <partial name="_GuestActionsPartial" model="Model" />
+
+                    @if (User.IsInRole("Organizer") && _userManager.GetUserId(User) == Model.OrganizerId)
+                    {
+                        <hr class="my-4">
+                        <div class="mt-3">
+                            <h6 class="fw-bold mb-3 text-muted">Management Tool</h6>
+                            <partial name="_OrganizerControlsPartial" model="Model" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_DeleteActivityPartial" model='new ActivityDeleteViewModel { Id = Model.Id, Title = Model.Title }' />

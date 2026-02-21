@@ -1,0 +1,65 @@
+﻿@using ActivitySystem.Models.ActivityVM
+@model ActivityDetailsViewModel
+
+<div class="card shadow-sm rounded-4 border-0 mb-4 overflow-hidden">
+    <div class="card-body p-4">
+        @if (Model.IsCurrentUserSubscribed)
+        {
+            <div class="text-center">
+                <div class="display-6 text-success mb-2">
+                    <i class="bi bi-patch-check-fill"></i>
+                </div>
+                <h5 class="fw-bold text-dark">You're going!</h5>
+                <p class="text-muted small">You are successfully registered for this activity.</p>
+                <div class="alert alert-success border-0 rounded-3 small">
+                    <i class="bi bi-info-circle me-1"></i> Check your dashboard for details.
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-end mb-2">
+                    <h4 class="fw-bold mb-0 @(Model.IsFull ? "text-danger" : "text-dark")">
+                        @(Model.IsFull ? "Full" : Model.AvailableSpots.ToString())
+                    </h4>
+                    <span class="text-muted small">Spots remaining</span>
+                </div>
+
+                <div class="progress rounded-pill" style="height: 8px;">
+                    <div class="progress-bar @(Model.FillPercentage > 80 ? "bg-danger" : "bg-primary")"
+                         role="progressbar"
+                         style="width: @Model.FillPercentage%"></div>
+                </div>
+                <p class="text-muted mt-2 small">@Model.RegisteredCount out of @Model.Capacity already joined</p>
+            </div>
+
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Guest"))
+            {
+                if (Model.IsFull)
+                {
+                    <button class="btn btn-light w-100 py-3 rounded-pill fw-bold text-muted" disabled>
+                        <i class="bi bi-x-circle-fill me-2"></i> Fully Booked
+                    </button>
+                }
+                else
+                {
+                    <form asp-controller="Subscription" asp-action="Join" method="post">
+                        <input type="hidden" name="activityId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-dark w-100 py-3 rounded-pill fw-bold shadow">
+                            <i class="bi bi-person-plus-fill me-2"></i> Join Activity
+                        </button>
+                    </form>
+                }
+            }
+            else if (!User.Identity.IsAuthenticated)
+            {
+                <a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Context.Request.Path"
+                   class="btn btn-outline-dark w-100 py-3 rounded-pill fw-bold">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Login to Join
+                </a>
+                <p class="text-center text-muted small mt-3 mb-0">Don't have an account? <a href="/Identity/Account/Register" class="text-primary text-decoration-none">Sign up</a></p>
+            }
+        }
+    </div>
+</div>

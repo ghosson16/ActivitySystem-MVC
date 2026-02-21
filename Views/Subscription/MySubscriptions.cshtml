@@ -1,0 +1,131 @@
+﻿@using ActivitySystem.Models.SubscriptionVM
+@model IEnumerable<MySubscriptionsViewModel>
+
+@{
+    ViewData["Title"] = "My Subscriptions";
+}
+
+<div class="container mt-5">
+    <partial name="_StatusMessages" />
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="bi bi-calendar2-check text-primary me-2"></i> My Subscriptions
+            </h2>
+            <p class="text-muted small">Manage your upcoming and past activity registrations</p>
+        </div>
+        <a asp-controller="Activity" asp-action="Index" class="btn btn-dark rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Discover More
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 shadow-sm bg-white rounded-4 border border-light">
+            <div class="mb-3">
+                <i class="bi bi-calendar-x text-muted opacity-25" style="font-size: 5rem;"></i>
+            </div>
+            <h4 class="fw-bold text-secondary">No subscriptions yet</h4>
+            <p class="text-muted mb-4">It looks like you haven't joined any activities.</p>
+            <a asp-controller="Activity" asp-action="Index" class="btn btn-primary rounded-pill px-5">Browse Activities</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm bg-white rounded-4 border-0 overflow-hidden">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 border-0 py-3 text-uppercase small fw-bold text-muted">Activity</th>
+                        <th class="border-0 py-3 text-uppercase small fw-bold text-muted">Status</th>
+                        <th class="border-0 py-3 text-uppercase small fw-bold text-muted">Schedule</th>
+                        <th class="border-0 py-3 text-uppercase small fw-bold text-muted text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sub in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark fs-6">@sub.ActivityTitle</div>
+                                <div class="text-muted small">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> @sub.Location
+                                </div>
+                            </td>
+                            <td>
+                                @if (sub.IsActivityDeleted)
+                                {
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Cancelled</span>
+                                }
+                                else if (sub.IsAttended)
+                                {
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-3">Attended</span>
+                                }
+                                else if (sub.ActivityDate < DateTime.Now)
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3">Past Event</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3">Confirmed</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="text-dark fw-semibold small">@sub.ActivityDate.ToString("MMM dd, yyyy")</div>
+                                <div class="text-muted small">@sub.ActivityDate.ToShortTimeString()</div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-controller="Activity" asp-action="Details" asp-route-id="@sub.ActivityId"
+                                       class="btn btn-sm btn-light border rounded-pill px-3 fw-bold">View</a>
+
+                                    @if (!sub.IsActivityDeleted && sub.ActivityDate >= DateTime.Now)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 border-0"
+                                                onclick="confirmUnsubscribe('@sub.ActivityId', '@sub.ActivityTitle')">
+                                            Cancel
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@* Modal & Scripts same as before *@
+<div class="modal fade" id="unsubscribeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-dark text-white border-0">
+                <h6 class="modal-title fw-bold">Cancel Subscription</h6>
+                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-5">
+                <h5 class="fw-bold">Are you sure?</h5>
+                <p class="text-muted">You are about to cancel your spot for: <br /> <strong id="activityTitleDisplay" class="text-dark"></strong></p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-light px-4 rounded-pill fw-bold" data-bs-dismiss="modal">Go Back</button>
+                <form asp-action="Unsubscribe" method="post">
+                    <input type="hidden" name="activityId" id="modalActivityId" />
+                    <button type="submit" class="btn btn-dark px-4 rounded-pill fw-bold shadow">Yes, Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmUnsubscribe(id, title) {
+            document.getElementById('modalActivityId').value = id;
+            document.getElementById('activityTitleDisplay').innerText = title;
+            new bootstrap.Modal(document.getElementById('unsubscribeModal')).show();
+        }
+    </script>
+}

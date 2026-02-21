@@ -1,0 +1,116 @@
+﻿@using ActivitySystem.Models.ActivityVM
+@model ActivityCreateViewModel
+
+<div class="container p-0 mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 g-0 custom-auth-card overflow-hidden border-0">
+
+            <div class="dark-auth-section d-flex align-items-center justify-content-between px-5 py-4">
+                <h4 class="mb-0 fw-bold">Create New Activity</h4>
+                <i class="bi bi-plus-circle-dotted fs-4 opacity-50"></i>
+            </div>
+
+            <div class="p-5">
+                <form asp-controller="Activity" asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-4 custom-focus pb-1">
+                        <label asp-for="Title" class="extra-small fw-bold text-muted text-uppercase mb-1 d-block">Activity Title</label>
+                        <input asp-for="Title" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" placeholder="e.g. Annual Tech Conference" />
+                        <span asp-validation-for="Title" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4 custom-focus pb-1">
+                            <label asp-for="Type" class="extra-small fw-bold text-muted text-uppercase mb-1 d-block">Activity Type</label>
+                            <select asp-for="Type" class="form-select border-0 bg-transparent p-0 shadow-none fs-6">
+                                <option value="">-- Select Type --</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Seminar">Seminar</option>
+                                <option value="Conference">Conference</option>
+                                <option value="Social">Social Event</option>
+                                <option value="Sports">Sports</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger extra-small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-4 custom-focus pb-1">
+                            <label asp-for="Capacity" class="extra-small fw-bold text-muted text-uppercase mb-1 d-block">Max Capacity</label>
+                            <input asp-for="Capacity" type="number" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" placeholder="1 - 1000" />
+                            <span asp-validation-for="Capacity" class="text-danger extra-small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 custom-focus pb-1">
+                        <label asp-for="Description" class="extra-small fw-bold text-muted text-uppercase mb-1 d-block">Description</label>
+                        <textarea asp-for="Description" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" rows="3" placeholder="Describe what's happening..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4 custom-focus pb-1">
+                            <label asp-for="Date" class="extra-small fw-bold text-muted text-uppercase mb-1 d-block">Date & Time</label>
+                            <input asp-for="Date" type="datetime-local" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" />
+                            <span asp-validation-for="Date" class="text-danger extra-small"></span>
+                        </div>
+                        <div class="col-md-6 mb-4 custom-focus pb-1">
+                            <label asp-for="Location" class="extra-small fw-bold text-muted text-uppercase mb-1 d-block">Location</label>
+                            <input asp-for="Location" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" placeholder="e.g. Hall A / Online" />
+                            <span asp-validation-for="Location" class="text-danger extra-small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 custom-focus pb-2">
+                        <label class="extra-small fw-bold text-muted text-uppercase mb-1 d-block">Activity Cover Image</label>
+                        <div class="d-flex align-items-center">
+
+                            <input asp-for="FormFile" id="imageUpload" class="form-control border-0 bg-transparent p-0 shadow-none fs-6" accept="image/*" />
+                            <i class="bi bi-image text-muted ms-2"></i>
+                        </div>
+                        <span asp-validation-for="FormFile" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="mb-5 text-center">
+                        <div id="previewContainer" class="position-relative d-inline-block p-2 bg-light rounded-3 border shadow-sm d-none">
+                            <img src="#" id="imagePreview" alt="Preview" style="max-height: 150px; border-radius: 0.5rem;" />
+                            <button type="button" onclick="removeImage()"
+                                    class="btn btn-danger btn-sm position-absolute top-0 start-100 translate-middle rounded-circle shadow p-0 d-flex align-items-center justify-content-center"
+                                    style="width: 25px; height: 25px;">
+                                <i class="bi bi-x fs-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-top d-flex justify-content-center gap-3">
+                        <a asp-controller="Activity" asp-action="Index" class="btn btn-light rounded-pill px-4 py-2 border text-muted">Cancel</a>
+                        <button type="submit" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">Add Activity</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const fileInput = document.getElementById('imageUpload');
+        const previewImg = document.getElementById('imagePreview');
+        const container = document.getElementById('previewContainer');
+
+        if (fileInput) {
+            fileInput.onchange = evt => {
+                const [file] = evt.target.files;
+                if (file) {
+                    previewImg.src = URL.createObjectURL(file);
+                    container.classList.remove('d-none');
+                }
+            };
+        }
+
+        function removeImage() {
+            container.classList.add('d-none');
+            if (fileInput) fileInput.value = "";
+        }
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

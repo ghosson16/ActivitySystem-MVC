@@ -1,0 +1,197 @@
+﻿@using ActivitySystem.Models.AccountVM
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .slider-container {
+            position: relative;
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 50px;
+            padding: 4px;
+            border: 1px solid #eee;
+        }
+
+        .slider-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 5px;
+            cursor: pointer;
+            z-index: 2;
+            transition: color 0.3s ease;
+            color: #6c757d;
+        }
+
+        .slider-bg {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            background: #212529; 
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1;
+        }
+
+        #roleOrganizer:checked ~ .slider-bg {
+            transform: translateX(100%);
+        }
+
+        .btn-check:checked + .slider-item {
+            color: #fff !important;
+        }
+
+        .btn-check {
+            display: none;
+        }
+
+    </style>
+}
+
+<div class="container py-5 mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 g-0 custom-auth-card overflow-hidden border-0 d-flex flex-column flex-md-row" style="min-height: 600px;">
+
+            <div class="col-md-5 dark-auth-section d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                <div class="mb-3">
+                    <i class="bi bi-person-plus text-secondary opacity-50" style="font-size: 5rem;"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Join Us!</h4>
+                <p class="small opacity-75 mb-4">Create an account and start your journey with amazing events.</p>
+                <a asp-action="Login" class="btn btn-outline-light btn-sm rounded-pill px-4 fw-semibold">Already a member?</a>
+            </div>
+
+            <div class="col-md-7 p-5">
+                <h4 class="fw-bold mb-4 text-dark">Create Account</h4>
+
+                <form method="post" asp-controller="Account" asp-action="Register">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-4">
+                        <div class="slider-container shadow-sm">
+                            <input type="radio" class="btn-check" asp-for="Role" value="Guest" id="roleGuest" checked onchange="toggleFields()">
+                            <label class="slider-item" for="roleGuest">
+                                <span class="d-block small fw-bold">Guest</span>
+                            </label>
+
+                            <input type="radio" class="btn-check" asp-for="Role" value="Organizer" id="roleOrganizer" onchange="toggleFields()">
+                            <label class="slider-item" for="roleOrganizer">
+                                <span class="d-block small fw-bold">Organizer</span>
+                            </label>
+                            <div class="slider-bg"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center border-bottom pb-1 custom-focus">
+                                <i class="bi bi-person text-muted me-2"></i>
+                                <input asp-for="Name" class="form-control border-0 shadow-none p-0 bg-transparent" placeholder="Full Name" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger extra-small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center border-bottom pb-1 custom-focus">
+                                <i class="bi bi-envelope text-muted me-2"></i>
+                                <input asp-for="Email" class="form-control border-0 shadow-none p-0 bg-transparent" placeholder="Email Address" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger extra-small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center border-bottom pb-1 custom-focus">
+                            <i class="bi bi-telephone text-muted me-2"></i>
+                            <input asp-for="PhoneNumber" class="form-control border-0 shadow-none p-0 bg-transparent" placeholder="Phone: 05xxxxxxxx" />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div id="guestFields" class="mb-3">
+                        <div class="d-flex align-items-center border-bottom pb-1 custom-focus">
+                            <i class="bi bi-calendar-event text-muted me-2"></i>
+                            <input asp-for="Age" class="form-control border-0 shadow-none p-0 bg-transparent" placeholder="Your Age" />
+                        </div>
+                    </div>
+
+                    <div id="organizerFields" class="mb-3" style="display:none;">
+                        <div class="d-flex align-items-start border-bottom pb-1 custom-focus">
+                            <i class="bi bi-info-circle text-muted me-2 mt-1"></i>
+                            <textarea asp-for="Description" class="form-control border-0 shadow-none p-0 bg-transparent fs-6"
+                                      rows="1" placeholder="Tell us about your organization..."
+                                      style="resize: none;"></textarea>
+                        </div>
+                        <span asp-validation-for="Description" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center border-bottom pb-1 custom-focus">
+                                <i class="bi bi-lock text-muted me-2"></i>
+                                <input asp-for="Password" id="passwordInput" type="password" class="form-control border-0 shadow-none p-0 bg-transparent" placeholder="Password" />
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center border-bottom pb-1 custom-focus">
+                                <i class="bi bi-shield-check text-muted me-2"></i>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control border-0 shadow-none p-0 bg-transparent" placeholder="Confirm Password" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="passwordChecklist" class="mb-4 p-2 bg-light rounded-3 shadow-sm" style="font-size: 0.7rem;">
+                        <div class="row g-1">
+                            <div id="lengthReq" class="col-6 text-danger">● 6+ chars</div>
+                            <div id="upperReq" class="col-6 text-danger">● Uppercase (A-Z)</div>
+                            <div id="lowerReq" class="col-6 text-danger">● Lowercase (a-z)</div>
+                            <div id="numberReq" class="col-6 text-danger">● Number (0-9)</div>
+                            <div id="specialReq" class="col-6 text-danger">● Special (@@, #, !)</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 rounded-3 py-2 fw-bold shadow-sm">Register Now</button>
+
+                    <div class="text-center mt-2">
+                        <a asp-controller="Home" asp-action="Index" class="text-muted extra-small text-decoration-none hover-dark">
+                            <i class="bi bi-arrow-left"></i> Back to Homepage
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleFields() {
+            var isOrganizer = document.getElementById('roleOrganizer').checked;
+            document.getElementById('guestFields').style.display = isOrganizer ? 'none' : 'block';
+            document.getElementById('organizerFields').style.display = isOrganizer ? 'block' : 'none';
+        }
+
+        document.getElementById('passwordInput').addEventListener('input', function () {
+            const pwd = this.value;
+            updateReq('lengthReq', pwd.length >= 6);
+            updateReq('upperReq', /[A-Z]/.test(pwd));
+            updateReq('lowerReq', /[a-z]/.test(pwd));
+            updateReq('numberReq', /[0-9]/.test(pwd));
+            updateReq('specialReq', /[!@@#$%^&*(),.?":{}|<>]/.test(pwd));
+        });
+
+        function updateReq(id, isValid) {
+            const el = document.getElementById(id);
+            el.classList.toggle('text-success', isValid);
+            el.classList.toggle('text-danger', !isValid);
+            el.innerHTML = (isValid ? '✔ ' : '● ') + el.innerHTML.slice(2);
+        }
+    </script>
+}
