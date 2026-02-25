@@ -6,6 +6,10 @@ A scalable web application built with **ASP.NET Core 10 MVC**. This system bridg
 ---
 
 ### 🏗️ Architectural Decisions & Logic
+#### System Architecture
+<img src="https://github.com/user-attachments/assets/bf1ef6e4-69e0-45c6-9f7c-95667aa680e6" width="100%" alt="Architecture Diagram">
+
+
 * **ViewModel Strategy:** Implemented to decouple domain models from the presentation layer. This approach ensures better security, maintains data integrity, and prevents sensitive information from being exposed in the UI.
 * **Smart Soft Delete Policy:** To ensure a consistent user experience (UX), activities are never abruptly removed from the database. Instead, a soft delete mechanism is applied so that attendees do not experience sudden data disappearance.
 
