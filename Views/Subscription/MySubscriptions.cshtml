@@ -15,9 +15,12 @@
             </h2>
             <p class="text-muted small">Manage your upcoming and past activity registrations</p>
         </div>
+        @if (Model.Any())
+            {
         <a asp-controller="Activity" asp-action="Index" class="btn btn-dark rounded-pill px-4 shadow-sm">
             <i class="bi bi-plus-lg me-1"></i> Discover More
         </a>
+            }
     </div>
 
     @if (!Model.Any())
@@ -28,7 +31,7 @@
             </div>
             <h4 class="fw-bold text-secondary">No subscriptions yet</h4>
             <p class="text-muted mb-4">It looks like you haven't joined any activities.</p>
-            <a asp-controller="Activity" asp-action="Index" class="btn btn-primary rounded-pill px-5">Browse Activities</a>
+            <a asp-controller="Activity" asp-action="Index" class="btn btn-dark rounded-pill px-5">Browse Activities</a>
         </div>
     }
     else
