@@ -6,7 +6,7 @@ A scalable web application built with **ASP.NET Core 10 MVC**. This system bridg
 ---
 
 ### 🏗️ Architectural Decisions & Logic
-#### System Architecture
+* **System Architecture**
 <img src="https://github.com/user-attachments/assets/bf1ef6e4-69e0-45c6-9f7c-95667aa680e6" width="100%" alt="Architecture Diagram">
 
 
